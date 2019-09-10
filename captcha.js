@@ -42,8 +42,10 @@ async function initiateCaptchaRequest(apiKey){
         json: 1
     };
     
+    // $.post() method loads data from the server using a HTTP POST request
     const response = await request.post('http://2captcha.com/in.php', {form: formData});
     
+    // JSON.parse() converts string to JSObject
     const requestId = JSON.parse(response).request;
 
     return requestId;
@@ -71,8 +73,10 @@ function requestCaptchaResults(apiKey, requestId) {
     const url = `http://2captcha.com/res.php?key=${apiKey}&action=get&id=${requestId}&json=1`;
     return async function() {
         return new Promise(async function(resolve, reject){
+            // $.get() method loads data from the server using a HTTP GET request
             const rawResponse = await request.get(url);
             const resp = JSON.parse(rawResponse);
+            // check status code of response
             if (resp.status === 0) return reject(resp.request);
             resolve(resp.request);
         });
