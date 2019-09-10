@@ -14,4 +14,5 @@ const chromeOptions = {
     await page.type('#passwd_reg', 'holymolyDonut$hop');
     await page.type('#passwd2_reg', 'holymolyDonut$hop');
     await page.type('#email_reg', 'yaboy@gmail.com');
+    await page.click('#register-form button');
 })()
