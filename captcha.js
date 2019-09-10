@@ -25,6 +25,9 @@ const chromeOptions = {
 })()
 
 // 2Captcha related
+
+// initiate captcha request via 2captcha apikey and pass in formData as entered on their site
+// needed in order to obtain requestId to then poll for results
 async function initiateCaptchaRequest(apiKey){
     const formData = {
         method: 'userrecaptcha',
@@ -43,3 +46,28 @@ async function initiateCaptchaRequest(apiKey){
     return requestId;
 }
 
+// poll for results with request id previously obtained in order to find the response needed to solve the captcha
+async function pollForRequestResults(key, id, retries = 30, interval = 1500, delay = 15000){
+    await timeout(delay);
+
+    return pollForRequestResults({
+        taskFn: requestCaptchaResults(key, id),
+        interval,
+        retries
+    });
+}
+
+// worst part lol
+
+function requestCaptchaResults(apiKey, requestId) {
+    // reference this: https://2captcha.com/2captcha-api
+    const url = `http://2captcha.com/res.php?key=${apiKey}&action=get&id=${requestId}&json=1`;
+    return async function() {
+        return new Promise(async function(resolve, reject){
+            const rawResponse = await request.get(url);
+            const resp = JSON.parse(rawResponse);
+            if (resp.status === 0) return reject(resp.request);
+            resolve(resp.request);
+        });
+    }
+}
