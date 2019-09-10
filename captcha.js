@@ -1,4 +1,6 @@
 const puppeteer = require('puppeteer');
+const request = require('request-promise-native');
+const poll = require('promise-poller').default;
 
 const chromeOptions = {
     headless:false,
@@ -19,6 +21,7 @@ const chromeOptions = {
 
     const response = await pollForRequestResults(apiKey, requestId);
 
+    // inject your response into the necessary field
     await page.evaluate(`document.getElementById("g-recaptcha-response").innerHTML="${response}";`);
 
     await page.click('#register-form button');
@@ -46,6 +49,9 @@ async function initiateCaptchaRequest(apiKey){
     return requestId;
 }
 
+const timeout = millis => new Promise(resolve => setTimeout(resolve, millis));
+
+// use promise-poller library to try fulfilling a Promise miltiple times until you run out of retries
 // poll for results with request id previously obtained in order to find the response needed to solve the captcha
 async function pollForRequestResults(key, id, retries = 30, interval = 1500, delay = 15000){
     await timeout(delay);
