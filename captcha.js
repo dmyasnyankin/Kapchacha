@@ -52,6 +52,7 @@ async function initiateCaptchaRequest(apiKey){
 const timeout = millis => new Promise(resolve => setTimeout(resolve, millis));
 
 // use promise-poller library to try fulfilling a Promise miltiple times until you run out of retries
+// promise-poller link: https://www.npmjs.com/package/promise-poller
 // poll for results with request id previously obtained in order to find the response needed to solve the captcha
 async function pollForRequestResults(key, id, retries = 30, interval = 1500, delay = 15000){
     await timeout(delay);
